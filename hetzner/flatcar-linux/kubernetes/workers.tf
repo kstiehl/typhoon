@@ -57,7 +57,7 @@
 #}
 
 resource "hcloud_server" "worker_server" {
-  count = var.worker.count
+  count = var.worker_count
   name  = "${var.cluster_name}-${count.index}"
   #ssh_keys = [hcloud_ssh_key.first.id]
   # boot into rescue OS
@@ -72,7 +72,7 @@ resource "hcloud_server" "worker_server" {
     timeout = "1m"
   }
   provisioner "file" {
-    content     = data.ct_config.worker-ignitions.*.rendered[count.index]
+    content     = data.ct_config.worker-ignition.*.rendered[count.index]
     destination = "/root/ignition.json"
   }
 

@@ -1,10 +1,10 @@
 # Kubernetes assets (kubeconfig, manifests)
 module "bootstrap" {
-  source = "git::https://github.com/poseidon/terraform-render-bootstrap.git?ref=ab5e18bba9c42a1eb6fa28588259596970d55641"
+  source = "git::https://github.com/poseidon/terraform-render-bootstrap.git"
 
   cluster_name = var.cluster_name
-  api_servers  = [format("%s.%s", var.cluster_name, var.dns_zone)]
-  etcd_servers = digitalocean_record.etcds.*.fqdn
+  api_servers  = [format("%s.%s", var.cluster_name, var.datacenter)]
+  etcd_servers = ["8.8.8.8"]
 
   networking = var.networking
 

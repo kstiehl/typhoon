@@ -13,12 +13,11 @@ resource "null_resource" "copy-controller-secrets" {
 
   depends_on = [
     module.bootstrap,
-    digitalocean_firewall.rules
   ]
 
   connection {
     type    = "ssh"
-    host    = digitalocean_droplet.controllers.*.ipv4_address[count.index]
+    host    = hcloud_server.controller_server.*.ipv4_address[count.index]
     user    = "core"
     timeout = "15m"
   }
@@ -47,7 +46,7 @@ resource "null_resource" "copy-worker-secrets" {
 
   connection {
     type    = "ssh"
-    host    = digitalocean_droplet.workers.*.ipv4_address[count.index]
+    host    = hcloud_server.worker_server.*.ipv4_address[count.index]
     user    = "core"
     timeout = "15m"
   }
@@ -73,7 +72,7 @@ resource "null_resource" "bootstrap" {
 
   connection {
     type    = "ssh"
-    host    = digitalocean_droplet.controllers[0].ipv4_address
+    host    = hcloud_server.controller_server[0].ipv4_address
     user    = "core"
     timeout = "15m"
   }
