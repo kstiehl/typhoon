@@ -138,6 +138,7 @@ data "template_file" "controller-configs" {
     etcd_initial_cluster   = join(",", data.template_file.etcds.*.rendered)
     cluster_dns_service_ip = cidrhost(var.service_cidr, 10)
     cluster_domain_suffix  = var.cluster_domain_suffix
+    ssh_keys=jsonencode([hcloud_ssh_key.ssh_admin_key.public_key])
   }
 }
 

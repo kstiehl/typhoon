@@ -1,4 +1,8 @@
 ---
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys: ${ssh_keys}
 systemd:
   units:
     - name: docker.service
