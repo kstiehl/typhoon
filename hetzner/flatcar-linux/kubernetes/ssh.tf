@@ -84,3 +84,8 @@ resource "null_resource" "bootstrap" {
   }
 }
 
+resource "hcloud_ssh_key" "ssh_admin_key" {
+  name       = "${var.cluster_name}-admin-key"
+  public_key = file(var.ssh_public_key_file)
+}
+

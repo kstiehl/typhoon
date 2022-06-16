@@ -3,8 +3,8 @@ module "bootstrap" {
   source = "git::https://github.com/poseidon/terraform-render-bootstrap.git"
 
   cluster_name = var.cluster_name
-  api_servers  = [for ip in hcloud_server.controller_server.*.ipv4_address: format("%s.nip.io", ip)] 
-  etcd_servers = [for ip in hcloud_server.controller_server.*.ipv4_address: format("%s.nip.io", ip)]
+  api_servers  = [for ip in hcloud_server.controller_server.*.ipv4_address : format("%s.nip.io", ip)]
+  etcd_servers = [for ip in hcloud_server.controller_server.*.ipv4_address : format("%s.nip.io", ip)]
 
   networking = var.networking
 

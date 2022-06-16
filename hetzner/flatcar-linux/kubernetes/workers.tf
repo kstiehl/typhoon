@@ -57,19 +57,19 @@
 #}
 
 resource "hcloud_server" "worker_server" {
-  count = var.worker_count
-  name  = "${var.cluster_name}-${count.index}"
-  #ssh_keys = [hcloud_ssh_key.first.id]
+  count    = var.worker_count
+  name     = "${var.cluster_name}-worker-${count.index}"
+  ssh_keys = [hcloud_ssh_key.ssh_admin_key.id]
   # boot into rescue OS
 
   rescue = "linux64"
   # dummy value for the OS because Flatcar is not available
-  image       = "debian-9"
+  image       = var.os_image
   server_type = var.worker_type
   datacenter  = var.datacenter
   connection {
     host    = self.ipv4_address
-    timeout = "1m"
+    timeout = "3m"
   }
   provisioner "file" {
     content     = data.ct_config.worker-ignition.*.rendered[count.index]

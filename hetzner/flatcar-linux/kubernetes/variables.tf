@@ -3,8 +3,6 @@ variable "cluster_name" {
   description = "Unique cluster name "
 }
 
-# hetzner 
-
 variable "datacenter" {
   type        = string
   description = "the hetzner datacenter in which this will be setup"
@@ -55,7 +53,13 @@ variable "worker_snippets" {
 
 # configuration
 
+variable "ssh_public_key_file" {
+  type        = string
+  description = "the path to the admin public key file"
+}
+
 variable "ssh_fingerprints" {
+  # TODO Check whether this is needed maybe we can use the attribute form the hcloud resource
   type        = list(string)
   description = "SSH public key fingerprints. (e.g. see `ssh-add -l -E md5`)"
 }
