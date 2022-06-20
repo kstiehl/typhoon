@@ -97,6 +97,15 @@ variable "enable_aggregation" {
   default     = true
 }
 
+
+# network
+#
+variable "etcd_network_cidr" {
+  type        = string
+  description = "The CIDR for the etcd network which should be used"
+  default     = "10.0.15.0/24"
+}
+
 # unofficial, undocumented, unsupported
 
 variable "cluster_domain_suffix" {

@@ -72,11 +72,17 @@ resource "hcloud_server" "controller_server" {
   name     = "${var.cluster_name}-controller-${count.index}"
   ssh_keys = [hcloud_ssh_key.ssh_admin_key.id]
 
-  # boot into rescue OS
+  depends_on = [hcloud_network_subnet.etcd_subnet]
 
+  network {
+    network_id = hcloud_network.etcd_network.id
+    ip         = cidrhost(var.etcd_network_cidr, count.index + 2)
+  }
+
+  # boot into rescue OS
   rescue = "linux64"
   # dummy value for the OS because Flatcar is not available
- 
+
   image       = var.os_image
   server_type = var.controller_type
   datacenter  = var.datacenter
@@ -84,7 +90,7 @@ resource "hcloud_server" "controller_server" {
     host    = self.ipv4_address
     timeout = "3m"
   }
-  
+
   provisioner "file" {
     content     = data.ct_config.controller-ignitions.*.rendered[count.index]
     destination = "/root/ignition.json"
@@ -132,25 +138,20 @@ data "template_file" "controller-configs" {
 
   vars = {
     # Cannot use cyclic dependencies on controllers or their DNS records
+    hostname = "controller-${count.index}"
     etcd_name   = "etcd${count.index}"
-    etcd_domain = "${var.cluster_name}-etcd${count.index}.${var.datacenter}"
+    etcd_domain = "${cidrhost(var.etcd_network_cidr, 2)}.nip.io"
     # etcd0=https://cluster-etcd0.example.com,etcd1=https://cluster-etcd1.example.com,...
     etcd_initial_cluster   = join(",", data.template_file.etcds.*.rendered)
     cluster_dns_service_ip = cidrhost(var.service_cidr, 10)
     cluster_domain_suffix  = var.cluster_domain_suffix
-    ssh_keys=jsonencode([hcloud_ssh_key.ssh_admin_key.public_key])
+    ssh_keys               = jsonencode([hcloud_ssh_key.ssh_admin_key.public_key])
   }
 }
 
 data "template_file" "etcds" {
   count    = var.controller_count
-  template = "etcd$${index}=https://$${cluster_name}-etcd$${index}.$${dns_zone}:2380"
-
-  vars = {
-    index        = count.index
-    cluster_name = var.cluster_name
-    dns_zone     = var.datacenter
-  }
+  template = "etcd${count.index}=https://${cidrhost(var.etcd_network_cidr, count.index + 2)}.nip.io:2380"
 }
 
 

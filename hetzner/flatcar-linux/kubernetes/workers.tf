@@ -116,7 +116,7 @@ data "template_file" "worker-config" {
   vars = {
     cluster_dns_service_ip = cidrhost(var.service_cidr, 10)
     cluster_domain_suffix  = var.cluster_domain_suffix
-    ssh_keys=jsonencode([hcloud_ssh_key.ssh_admin_key.public_key])
+    ssh_keys               = jsonencode([hcloud_ssh_key.ssh_admin_key.public_key])
   }
 }
 
